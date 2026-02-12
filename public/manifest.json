@@ -4,7 +4,7 @@
     "description": "AMIK CHAT Database Management Dashboard",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#020617",
+    "background_color": "#119d3c",
     "theme_color": "#06b6d4",
     "orientation": "portrait-primary",
     "icons": [

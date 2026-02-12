@@ -72,7 +72,13 @@ export default function SettingsPage() {
 
     return (
         <div className="space-y-6">
-            <div><h1 className="text-2xl font-bold gradient-text">Settings</h1><p className="text-sm text-brand-muted mt-1">Application configuration & database management</p></div>
+            <div className="flex items-center gap-3">
+                <img src="/logo.png" alt="Logo" className="w-12 h-12 object-contain filter drop-shadow-cyan" />
+                <div>
+                    <h1 className="text-2xl font-bold gradient-text">Settings</h1>
+                    <p className="text-sm text-brand-muted mt-1">Application configuration & database management</p>
+                </div>
+            </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {settingSections.map((section) => (
@@ -90,8 +96,8 @@ export default function SettingsPage() {
                                     </div>
                                 ) : (
                                     <button key={item.label} onClick={item.action} className={`w-full flex items-center gap-3 p-3 rounded-lg border text-left transition-all hover:scale-[1.01] ${item.variant === 'primary' ? 'border-brand-cyan/50 hover:bg-cyan-500/10' :
-                                            item.variant === 'danger' ? 'border-red-500/50 hover:bg-red-500/10' :
-                                                'border-brand-border hover:bg-brand-border/30'
+                                        item.variant === 'danger' ? 'border-red-500/50 hover:bg-red-500/10' :
+                                            'border-brand-border hover:bg-brand-border/30'
                                         }`}>
                                         <item.icon size={18} className={item.variant === 'primary' ? 'text-brand-cyan' : item.variant === 'danger' ? 'text-red-400' : 'text-brand-muted'} />
                                         <div><p className="text-sm text-brand-text font-medium">{item.label}</p><p className="text-xs text-brand-muted">{item.description}</p></div>

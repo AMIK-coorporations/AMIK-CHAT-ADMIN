@@ -33,7 +33,7 @@ export default function Sidebar({ isOpen, onClose }) {
                 {/* Logo Area */}
                 <div className="p-6 border-b border-brand-border">
                     <div className="flex items-center gap-3">
-                        <img src="/logo.png" alt="AMIK CHAT" className="w-10 h-10 rounded-xl object-cover" />
+                        <img src="/logo.png" alt="AMIK CHAT" className="w-10 h-10 object-contain" />
                         <div>
                             <h1 className="text-lg font-bold gradient-text">AMIK CHAT</h1>
                             <p className="text-xs text-brand-muted">Database Manager</p>

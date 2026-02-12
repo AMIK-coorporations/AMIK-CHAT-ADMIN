@@ -71,9 +71,12 @@ export default function Dashboard() {
         <div className="space-y-6">
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold gradient-text">Database Overview</h1>
-                    <p className="text-sm text-brand-muted mt-1">Real-time statistics from InsForge</p>
+                <div className="flex items-center gap-3">
+                    <img src="/logo.png" alt="Logo" className="w-12 h-12 object-contain filter drop-shadow-cyan" />
+                    <div>
+                        <h1 className="text-2xl font-bold gradient-text">Database Overview</h1>
+                        <p className="text-sm text-brand-muted mt-1">Real-time statistics from InsForge</p>
+                    </div>
                 </div>
                 <div className="flex items-center gap-3">
                     <div className="flex items-center gap-2 text-xs text-brand-muted">
@@ -143,8 +146,8 @@ export default function Dashboard() {
                             recentActivity.map((act, i) => (
                                 <div key={i} className="flex items-center gap-3 p-3 rounded-lg hover:bg-brand-border/30 transition-colors">
                                     <span className={`badge text-[10px] ${act.type === 'INSERT' ? 'bg-green-500/20 text-green-400' :
-                                            act.type === 'UPDATE' ? 'bg-blue-500/20 text-blue-400' :
-                                                'bg-red-500/20 text-red-400'
+                                        act.type === 'UPDATE' ? 'bg-blue-500/20 text-blue-400' :
+                                            'bg-red-500/20 text-red-400'
                                         }`}>
                                         {act.type}
                                     </span>
