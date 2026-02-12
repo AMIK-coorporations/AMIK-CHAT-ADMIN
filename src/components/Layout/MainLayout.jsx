@@ -17,7 +17,8 @@ export default function MainLayout({ children }) {
                 >
                     <Menu size={20} className="text-brand-text" />
                 </button>
-                <span className="ml-3 font-semibold gradient-text">AMIK CHAT DB</span>
+                <img src="/logo.png" alt="AMIK CHAT" className="ml-3 w-7 h-7 rounded-md object-cover" />
+                <span className="ml-2 font-semibold gradient-text">AMIK CHAT DB</span>
             </div>
 
             {/* Main content */}

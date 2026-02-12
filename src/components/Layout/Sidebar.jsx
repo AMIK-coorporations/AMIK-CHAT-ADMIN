@@ -1,7 +1,7 @@
 import { NavLink, useLocation } from 'react-router-dom'
 import {
     Activity, Users, MessageSquare, UserPlus, Phone,
-    PlayCircle, BarChart3, Settings, Database, Wifi, WifiOff
+    PlayCircle, BarChart3, Settings, Wifi, WifiOff
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -33,9 +33,7 @@ export default function Sidebar({ isOpen, onClose }) {
                 {/* Logo Area */}
                 <div className="p-6 border-b border-brand-border">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center">
-                            <Database size={20} className="text-white" />
-                        </div>
+                        <img src="/logo.png" alt="AMIK CHAT" className="w-10 h-10 rounded-xl object-cover" />
                         <div>
                             <h1 className="text-lg font-bold gradient-text">AMIK CHAT</h1>
                             <p className="text-xs text-brand-muted">Database Manager</p>
