@@ -1,5 +1,7 @@
 import { useState, useMemo } from 'react'
 import { useInsforge } from '../hooks/useInsforge'
+import { createClient } from '@insforge/sdk'
+import { INSFORGE_CONFIG } from '../lib/insforge'
 import DataTable from '../components/DataTable'
 import SearchFilter from '../components/SearchFilter'
 import Modal from '../components/Modal'
@@ -10,7 +12,10 @@ import { useToast } from '../components/Toast'
 import { searchFilter, formatRelativeTime, formatDateShort, nowISO, truncateId } from '../utils/helpers'
 import { Plus, Download, Edit, Eye, Trash2, Loader2 } from 'lucide-react'
 
-const emptyUser = { email: '', name: '', display_name: '', avatar_url: '', photo_url: '', phone_number: '', gender: '', region: '', address: '', status: 'Available', bio: '', security_pin: '', is_online: false }
+const emptyUser = { email: '', password: '', name: '', display_name: '', avatar_url: '', photo_url: '', phone_number: '', gender: '', region: '', address: '', status: 'Available', bio: '', security_pin: '', is_online: false }
+
+// Dummy storage to prevent session persistence when creating users
+const memoryStorage = { getItem: () => null, setItem: () => { }, removeItem: () => { } }
 
 export default function UsersPage() {
     const { users } = useInsforge()
@@ -48,14 +53,48 @@ export default function UsersPage() {
 
     const handleSave = async () => {
         if (!form.name || !form.email) { toast('Name and Email are required', 'error'); return }
+        if (modalMode === 'add' && !form.password) { toast('Password is required for new users', 'error'); return }
+
         setSaving(true)
         if (modalMode === 'add') {
-            const { id, ...payload } = form
-            const { error } = await addItem({ ...payload, created_at: nowISO(), last_seen: nowISO() })
-            if (error) toast(`Error: ${error}`, 'error')
-            else toast('User created successfully', 'success')
+            try {
+                // 1. Create Auth User (using isolated client)
+                const tempClient = createClient({
+                    ...INSFORGE_CONFIG,
+                    storage: memoryStorage,
+                    persistSession: false,
+                    autoRefreshToken: false
+                })
+
+                const { data: authData, error: authError } = await tempClient.auth.signUp({
+                    email: form.email,
+                    password: form.password,
+                    options: {
+                        data: { full_name: form.name }
+                    }
+                })
+
+                if (authError) throw new Error(authError.message)
+                if (!authData.user) throw new Error('Failed to create auth user')
+
+                // 2. Insert into Public Table
+                const { id, password, ...payload } = form
+                // Use the Auth ID for the public table record
+                const { error } = await addItem({
+                    ...payload,
+                    id: authData.user.id,
+                    created_at: nowISO(),
+                    last_seen: nowISO()
+                })
+
+                if (error) throw new Error(error)
+
+                toast('User created successfully (Auth + DB)', 'success')
+            } catch (err) {
+                toast(`Error: ${err.message}`, 'error')
+            }
         } else {
-            const { id, ...updates } = form
+            const { id, password, ...updates } = form
             const { error } = await updateItem(form.id, updates)
             if (error) toast(`Error: ${error}`, 'error')
             else toast('User updated successfully', 'success')
@@ -134,7 +173,15 @@ export default function UsersPage() {
                 footer={<div className="flex items-center justify-between w-full"><button onClick={() => setModalMode(null)} className="px-5 py-2.5 rounded-lg border border-brand-border text-brand-text font-medium hover:bg-brand-border/50">Cancel</button><button onClick={handleSave} disabled={saving} className="px-5 py-2.5 rounded-lg gradient-bg text-white font-semibold hover:shadow-cyan-lg disabled:opacity-50">{saving ? 'Saving...' : modalMode === 'add' ? 'Create User' : 'Update User'}</button></div>}
             >
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {[...(modalMode === 'edit' ? [{ key: 'id', label: 'ID', disabled: true }] : []), { key: 'email', label: 'Email *', type: 'email' }, { key: 'name', label: 'Name *' }, { key: 'display_name', label: 'Display Name' }, { key: 'phone_number', label: 'Phone Number' }, { key: 'avatar_url', label: 'Avatar URL' }].map((f) => (
+                    {[
+                        ...(modalMode === 'edit' ? [{ key: 'id', label: 'ID', disabled: true }] : []),
+                        { key: 'email', label: 'Email *', type: 'email' },
+                        ...(modalMode === 'add' ? [{ key: 'password', label: 'Password *', type: 'text' }] : []),
+                        { key: 'name', label: 'Name *' },
+                        { key: 'display_name', label: 'Display Name' },
+                        { key: 'phone_number', label: 'Phone Number' },
+                        { key: 'avatar_url', label: 'Avatar URL' }
+                    ].map((f) => (
                         <div key={f.key}><label className="text-xs font-medium text-brand-muted mb-1.5 block">{f.label}</label><input type={f.type || 'text'} value={form[f.key] || ''} onChange={(e) => setForm({ ...form, [f.key]: e.target.value })} disabled={f.disabled} className="w-full px-3 py-2.5 bg-brand-bg border border-brand-border rounded-lg text-sm text-brand-text disabled:opacity-50" /></div>
                     ))}
                     <div><label className="text-xs font-medium text-brand-muted mb-1.5 block">Gender</label><select value={form.gender || ''} onChange={(e) => setForm({ ...form, gender: e.target.value })} className="w-full px-3 py-2.5 bg-brand-bg border border-brand-border rounded-lg text-sm text-brand-text"><option value="">Select</option><option value="Male">Male</option><option value="Female">Female</option><option value="Other">Other</option></select></div>
