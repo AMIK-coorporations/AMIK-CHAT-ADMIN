@@ -1,8 +1,8 @@
 import { createClient } from '@insforge/sdk'
 
 export const INSFORGE_CONFIG = {
-    baseUrl: 'https://suiirdm9.ap-southeast.insforge.app',
-    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3OC0xMjM0LTU2NzgtOTBhYi1jZGVmMTIzNDU2NzgiLCJlbWFpbCI6ImFub25AaW5zZm9yZ2UuY29tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA4ODQxMTl9.sSlFyglJA_l4YJvsYSHh--nW10E8hOdLSVdXBt7Tj7o'
+    baseUrl: 'https://484txp7m.ap-southeast.insforge.app',
+    anonKey: 'anon_d52e90e7e94ac4942768d85d1a3215313446b9cb8dce158d8dbd940c0c63072f'
 }
 
 export const insforge = createClient(INSFORGE_CONFIG)
